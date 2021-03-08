@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System;
+using UnityEngine.Profiling;
+
 
 public class BoidController : MonoBehaviour
 {
@@ -44,30 +45,16 @@ public class BoidController : MonoBehaviour
         boidsCached = BoidSpawner.Instance.boids;
     }
 
+    Collider[] boidColliderOverlap = new Collider[32];
+    int boidColliderCount = 0;
     void Update()
-    {
-        combinedVelocityDelta = AggregateForces();
-
-        currentVelocity += combinedVelocityDelta * Time.deltaTime;
-        direction = currentVelocity.normalized;
-        float speed = currentVelocity.magnitude;
-        //Vector3 clamp can only clamp max 
-        speed = Mathf.Clamp(speed, settings.MinVelocity, settings.MaxVelocity);
-        currentVelocity = direction * speed;
-        transform.position += currentVelocity * Time.deltaTime;
-        transform.forward = direction;
-    }
-
-    BoidController[] boidsCached;
-
-    void FixedUpdate()
     {
         boidsToConsider.Clear();
         //maybe do this based on distance alone so no physics are involved?
-        Collider[] col = Physics.OverlapSphere(transform.position, settings.AwarenessRadius, settings.BoidMask);
-        foreach (Collider collider in col)
+        boidColliderCount = Physics.OverlapSphereNonAlloc(transform.position, settings.AwarenessRadius, boidColliderOverlap, settings.BoidMask);
+        for (int i = 0; i < boidColliderCount; i++)
         {
-            boidsToConsider.Add(collider.gameObject);
+            boidsToConsider.Add(boidColliderOverlap[i].gameObject);
         }
 
         // for (int i = 0; i < boidsCached.Length; i++)
@@ -81,7 +68,25 @@ public class BoidController : MonoBehaviour
 
         headingForCollision = CheckForCollision();
 
+
+        
+
+        Profiler.BeginSample("Aggregate Forces");
+        combinedVelocityDelta = AggregateForces();
+        Profiler.EndSample();
+
+        currentVelocity += combinedVelocityDelta * Time.deltaTime;
+        direction = currentVelocity.normalized;
+        float speed = currentVelocity.magnitude;
+        //Vector3 clamp can only clamp max 
+        speed = Mathf.Clamp(speed, settings.MinVelocity, settings.MaxVelocity);
+        currentVelocity = direction * speed;
+        transform.position += currentVelocity * Time.deltaTime;
+        transform.forward = direction;
     }
+
+    BoidController[] boidsCached;
+
 
     private void OnCollisionEnter(Collision other)
     {
@@ -210,11 +215,9 @@ public class BoidController : MonoBehaviour
 
     private Vector3 ObstacleAvoidance()
     {
-        Ray ray;
         foreach (Vector3 dir in FibonacciSphere)
         {
-            ray = new Ray(transform.position, transform.TransformDirection(dir));
-            if (!Physics.SphereCast(ray, settings.ObstacleDetectionSphereRadius, settings.ObstacleDetectionRange, settings.ObstacleMask))
+            if (Physics.SphereCastNonAlloc(transform.position, settings.ObstacleDetectionSphereRadius,transform.TransformDirection(dir), hits, settings.ObstacleDetectionRange, settings.ObstacleMask) == 0)
                 return transform.TransformDirection(dir);
         }
         return transform.forward;
@@ -222,18 +225,20 @@ public class BoidController : MonoBehaviour
 
     #endregion
 
+    RaycastHit[] hits = new RaycastHit[1];
+    Collider[] cols = new Collider[1];
+
     private bool CheckForCollision()
     {
-        RaycastHit hit;
         //if heading for collision, return true
-        if (Physics.SphereCast(transform.position, settings.ObstacleDetectionSphereRadius, transform.forward, out hit, settings.ObstacleDetectionRange, settings.ObstacleMask))
+        if (0 != Physics.SphereCastNonAlloc(transform.position, settings.ObstacleDetectionSphereRadius, transform.forward, hits, settings.ObstacleDetectionRange, Physics.AllLayers ^settings.ObstacleMask))
         {
             return true;
         }
         //if not heading for collision but did so last frame, check if a wall is too close
         if (headingForCollision)
         {
-            return Physics.OverlapSphere(transform.position, settings.ObstacleDetectionSphereRadius, Physics.AllLayers ^ settings.ObstacleMask).Length > 0;
+            return Physics.OverlapSphereNonAlloc(transform.position, settings.ObstacleDetectionSphereRadius, cols, Physics.AllLayers ^ settings.ObstacleMask) > 0;
         }
         return false;
     }

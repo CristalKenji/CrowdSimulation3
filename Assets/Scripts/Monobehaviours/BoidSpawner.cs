@@ -14,12 +14,17 @@ public class BoidSpawner : MonoBehaviour
     [SerializeField]
     GameObject boidPrefab;
     [SerializeField]
-    int amountOfBoids = 100;
+    public int amountOfBoids = 100;
     [SerializeField]
     float spawnRadius = 10;
 
     internal BoidController[] boids;
 
+    public int BoidCount {
+        get{
+            return boids.Length;
+        }
+    } 
 
     private void Awake()
     {
@@ -36,6 +41,10 @@ public class BoidSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SpawnBoids();
+    }
+
+    public void SpawnBoids(){
         for (int boidCounter = 0; boidCounter < amountOfBoids; boidCounter++)
         {
             Instantiate(boidPrefab, transform.position + Random.onUnitSphere * Random.Range(0f, spawnRadius), Random.rotation);
