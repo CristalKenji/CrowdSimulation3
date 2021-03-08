@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2482816995f8a484895822a33d1cf232, type: 3}
+  m_Name: BoidSettings
+  m_EditorClassIdentifier: 
+  AwarenessRadius: 2.5
+  MinVelocity: 5
+  MaxVelocity: 8
+  MaxSteerForce: 12.29
+  UseOptimizedRules: 0
+  CohesionWeight: 1
+  AlignmentWeight: 2
+  SeparationWeight: 2.2
+  ObstacleAvoidanceWeight: 59.8
+  BoidMask:
+    serializedVersion: 2
+    m_Bits: 64
+  ObstacleRays: 128
+  ObstacleMask:
+    serializedVersion: 2
+    m_Bits: 128
+  ObstacleDetectionSphereRadius: 0.85
+  ObstacleDetectionRange: 10.29
+  boidMaterialDefault: {fileID: 2100000, guid: b7843968dd378684ba2aa90bbbb62176, type: 2}
+  boidMaterialHeadingForCollision: {fileID: 2100000, guid: 2f3336087b4115c478b140aa2a70b0c2,
+    type: 2}
+  boidMaterialEscaped: {fileID: 2100000, guid: 30401c5481f5ec64ebed452862820b3e, type: 2}
