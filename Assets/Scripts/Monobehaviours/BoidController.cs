@@ -68,12 +68,7 @@ public class BoidController : MonoBehaviour
 
         headingForCollision = CheckForCollision();
 
-
-        
-
-        Profiler.BeginSample("Aggregate Forces");
         combinedVelocityDelta = AggregateForces();
-        Profiler.EndSample();
 
         currentVelocity += combinedVelocityDelta * Time.deltaTime;
         direction = currentVelocity.normalized;
