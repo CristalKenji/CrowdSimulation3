@@ -8,7 +8,7 @@ using UnityEngine.Profiling;
 public class BoidController : MonoBehaviour
 {
     #region Movement Variables
-    internal HashSet<GameObject> boidsToConsider = new HashSet<GameObject>();
+    internal HashSet<Transform> boidsToConsider = new HashSet<Transform>();
     public Vector3 direction, cohesion, alignment, separation, obstacleEvasion;
     internal Vector3 cohesionSteeringDelta, alignmentSteeringDelta, separationSteeringDelta, obstacleEvasionSteeringDelta;
     internal Vector3 currentVelocity, combinedVelocityDelta;
@@ -54,7 +54,7 @@ public class BoidController : MonoBehaviour
         boidColliderCount = Physics.OverlapSphereNonAlloc(transform.position, settings.AwarenessRadius, boidColliderOverlap, settings.BoidMask);
         for (int i = 0; i < boidColliderCount; i++)
         {
-            boidsToConsider.Add(boidColliderOverlap[i].gameObject);
+            boidsToConsider.Add(boidColliderOverlap[i].transform);
         }
 
         // for (int i = 0; i < boidsCached.Length; i++)
@@ -63,7 +63,7 @@ public class BoidController : MonoBehaviour
         //         boidsToConsider.Add(boidsCached[i].gameObject);
         // }
 
-        boidsToConsider.Remove(gameObject);
+        boidsToConsider.Remove(transform);
         boidsConsidered = boidsToConsider.Count;
 
         headingForCollision = CheckForCollision();
@@ -113,6 +113,8 @@ public class BoidController : MonoBehaviour
         }
         obstacleEvasion = headingForCollision ? ObstacleAvoidance() : Vector3.zero;
 
+
+
         cohesionSteeringDelta = CalculateSteeringDelta(cohesion, currentVelocity, settings.MaxSteerForce) * settings.CohesionWeight;
         alignmentSteeringDelta = CalculateSteeringDelta(alignment, currentVelocity, settings.MaxSteerForce) * settings.AlignmentWeight;
         separationSteeringDelta = CalculateSteeringDelta(separation, currentVelocity, settings.MaxSteerForce) * settings.SeparationWeight;
@@ -140,9 +142,9 @@ public class BoidController : MonoBehaviour
 
         Vector3 localAlignment = Vector3.zero;
 
-        foreach (GameObject neighbour in boidsToConsider)
+        foreach (Transform neighbour in boidsToConsider)
         {
-            localAlignment += neighbour.transform.forward;
+            localAlignment += neighbour.forward;
         }
         return localAlignment.normalized;
     }
@@ -156,9 +158,9 @@ public class BoidController : MonoBehaviour
         if (boidsToConsider.Count == 0)
             return localCohesion;
 
-        foreach (GameObject neighbour in boidsToConsider)
+        foreach (Transform neighbour in boidsToConsider)
         {
-            localCohesion += neighbour.transform.position;
+            localCohesion += neighbour.position;
         }
         localCohesion = localCohesion / boidsToConsider.Count - transform.position;
         return localCohesion;
@@ -170,9 +172,9 @@ public class BoidController : MonoBehaviour
         Vector3 localSeparation = Vector3.zero;
         if (boidsToConsider.Count == 0)
             return localSeparation;
-        foreach (GameObject neighbour in boidsToConsider)
+        foreach (Transform neighbour in boidsToConsider)
         {
-            Vector3 neighbourToThis = transform.position - neighbour.transform.position;
+            Vector3 neighbourToThis = transform.position - neighbour.position;
 
             //Inversely Proportional force, closer boids cause higher force
             localSeparation += neighbourToThis.normalized - (neighbourToThis / settings.AwarenessRadius);
@@ -182,12 +184,15 @@ public class BoidController : MonoBehaviour
         return localSeparation;
     }
 
+    Vector3 neighbourPos, neighbourDir, ownPos;
+
     private void OptimizedRules(out Vector3 alignment, out Vector3 cohesion, out Vector3 separation)
     {
 
         alignment = transform.forward;
         cohesion = Vector3.zero;
         separation = Vector3.zero;
+        ownPos = transform.position;
 
         if (boidsToConsider.Count == 0)
         {
@@ -195,25 +200,45 @@ public class BoidController : MonoBehaviour
         }
 
         Vector3 neighbourToThis = Vector3.zero;
-        foreach (GameObject neighbour in boidsToConsider)
+        foreach (Transform neighbour in boidsToConsider)
         {
-            alignment += neighbour.transform.forward;
-            cohesion += neighbour.transform.position;
-            neighbourToThis = transform.position - neighbour.transform.position;
+
+            neighbourPos = neighbour.position;
+            neighbourDir = neighbour.forward;
+
+            if (settings.StripYAxis)
+            {
+                alignment.y = 0;
+                neighbourPos.y = 0;
+                neighbourDir.y = 0;
+                neighbourDir = neighbourDir.normalized;
+                ownPos.y = 0;
+            }
+
+            alignment += neighbourDir;
+            cohesion += neighbourPos;
+            neighbourToThis = ownPos - neighbourPos;
             separation += neighbourToThis.normalized - (neighbourToThis / settings.AwarenessRadius);
         }
 
         alignment = alignment.normalized;
-        cohesion = cohesion / boidsToConsider.Count - transform.position;
+        cohesion = cohesion / boidsToConsider.Count - ownPos;
         separation /= boidsToConsider.Count;
     }
 
+    Vector3 modifiedDir;
     private Vector3 ObstacleAvoidance()
     {
         foreach (Vector3 dir in FibonacciSphere)
         {
-            if (Physics.SphereCastNonAlloc(transform.position, settings.ObstacleDetectionSphereRadius,transform.TransformDirection(dir), hits, settings.ObstacleDetectionRange, settings.ObstacleMask) == 0)
-                return transform.TransformDirection(dir);
+            modifiedDir = dir;
+            if (settings.StripYAxis)
+            {
+                modifiedDir.y = 0;
+                modifiedDir = modifiedDir.normalized;
+            }
+            if (Physics.SphereCastNonAlloc(transform.position, settings.ObstacleDetectionSphereRadius, transform.TransformDirection(modifiedDir), hits, settings.ObstacleDetectionRange, settings.ObstacleMask) == 0)
+                return transform.TransformDirection(modifiedDir);
         }
         return transform.forward;
     }
@@ -226,7 +251,7 @@ public class BoidController : MonoBehaviour
     private bool CheckForCollision()
     {
         //if heading for collision, return true
-        if (0 != Physics.SphereCastNonAlloc(transform.position, settings.ObstacleDetectionSphereRadius, transform.forward, hits, settings.ObstacleDetectionRange, Physics.AllLayers ^settings.ObstacleMask))
+        if (0 != Physics.SphereCastNonAlloc(transform.position, settings.ObstacleDetectionSphereRadius, transform.forward, hits, settings.ObstacleDetectionRange, Physics.AllLayers ^ settings.ObstacleMask))
         {
             return true;
         }

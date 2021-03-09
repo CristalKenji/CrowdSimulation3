@@ -24,5 +24,5 @@ public class BoidSettings : ScriptableObject
     public Material boidMaterialDefault;
     public Material boidMaterialHeadingForCollision;
     public Material boidMaterialEscaped;
-
+    public bool StripYAxis;
 }

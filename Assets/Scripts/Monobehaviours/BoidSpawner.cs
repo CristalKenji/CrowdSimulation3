@@ -20,11 +20,15 @@ public class BoidSpawner : MonoBehaviour
 
     internal BoidController[] boids;
 
-    public int BoidCount {
-        get{
+    public BoidSettings settings;
+
+    public int BoidCount
+    {
+        get
+        {
             return boids.Length;
         }
-    } 
+    }
 
     private void Awake()
     {
@@ -44,10 +48,18 @@ public class BoidSpawner : MonoBehaviour
         SpawnBoids();
     }
 
-    public void SpawnBoids(){
+    GameObject temp;
+    public void SpawnBoids()
+    {
         for (int boidCounter = 0; boidCounter < amountOfBoids; boidCounter++)
         {
-            Instantiate(boidPrefab, transform.position + Random.onUnitSphere * Random.Range(0f, spawnRadius), Random.rotation);
+            temp = Instantiate(boidPrefab, transform.position + Random.onUnitSphere * Random.Range(0f, spawnRadius), Random.rotation);
+            if (settings.StripYAxis)
+            {
+                temp.transform.Translate(0, -temp.transform.position.y, 0, Space.World);
+                temp.transform.rotation = Quaternion.identity;
+                temp.transform.Rotate(0, Random.Range(0, 360), 0);
+            }
         }
         boids = FindObjectsOfType<BoidController>();
     }

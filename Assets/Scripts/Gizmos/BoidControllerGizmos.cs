@@ -45,9 +45,9 @@ public class BoidGizmo
     static void DrawBoidsInRange(BoidController src, GizmoType gizmoType)
     {
         Gizmos.color = boidConnectionColor;
-        foreach (GameObject go in src.boidsToConsider)
+        foreach (Transform go in src.boidsToConsider)
         {
-            Gizmos.DrawLine(src.transform.position, go.transform.position);
+            Gizmos.DrawLine(src.transform.position, go.position);
         }
     }
 
@@ -57,6 +57,13 @@ public class BoidGizmo
         Gizmos.color = obstacleRayColor;
         Gizmos.DrawLine(src.transform.position, src.transform.position + src.obstacleEvasion);
         Gizmos.DrawWireSphere(src.transform.position, src.settings.ObstacleDetectionSphereRadius);
+    }
+
+    [DrawGizmo(GizmoType.Active | GizmoType.Selected)]
+    static void DrawBoidDetectionSphere(BoidController src, GizmoType gizmoType)
+    {
+        Gizmos.color = obstacleRayColor;
+        Gizmos.DrawWireSphere(src.transform.position, src.settings.ObstacleDetectionRange);
     }
 
     [DrawGizmo(GizmoType.NotInSelectionHierarchy)]
