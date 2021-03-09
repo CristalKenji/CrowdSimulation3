@@ -16,6 +16,8 @@ public class BoidSettings : ScriptableObject
     public float AlignmentWeight;
     public float SeparationWeight;
     public float ObstacleAvoidanceWeight;
+    public float TargetWeight;
+
     public LayerMask BoidMask;
     public int ObstacleRays;
     public LayerMask ObstacleMask;

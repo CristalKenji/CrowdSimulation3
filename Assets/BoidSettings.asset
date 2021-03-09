@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: BoidSettings
   m_EditorClassIdentifier: 
   AwarenessRadius: 2.5
-  MinVelocity: 5
-  MaxVelocity: 8
-  MaxSteerForce: 12.29
-  UseOptimizedRules: 0
+  MinVelocity: 1.12
+  MaxVelocity: 3.36
+  MaxSteerForce: 12.7
+  UseOptimizedRules: 1
   CohesionWeight: 1
   AlignmentWeight: 2
-  SeparationWeight: 2.2
+  SeparationWeight: 2.21
   ObstacleAvoidanceWeight: 59.8
+  TargetWeight: 5
   BoidMask:
     serializedVersion: 2
     m_Bits: 64
@@ -28,9 +29,10 @@ MonoBehaviour:
   ObstacleMask:
     serializedVersion: 2
     m_Bits: 128
-  ObstacleDetectionSphereRadius: 0.85
-  ObstacleDetectionRange: 10.29
+  ObstacleDetectionSphereRadius: 0.87
+  ObstacleDetectionRange: 11.09
   boidMaterialDefault: {fileID: 2100000, guid: b7843968dd378684ba2aa90bbbb62176, type: 2}
   boidMaterialHeadingForCollision: {fileID: 2100000, guid: 2f3336087b4115c478b140aa2a70b0c2,
     type: 2}
   boidMaterialEscaped: {fileID: 2100000, guid: 30401c5481f5ec64ebed452862820b3e, type: 2}
+  StripYAxis: 1

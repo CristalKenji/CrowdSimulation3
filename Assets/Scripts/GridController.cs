@@ -170,6 +170,7 @@ public class GridController
                 {
                     GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     cube.transform.position = new Vector3(x, 0.5f, y);
+                    cube.layer = LayerMask.NameToLayer("Obstacle");
                 }
             }
         }

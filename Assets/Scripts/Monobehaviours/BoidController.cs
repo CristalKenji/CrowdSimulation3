@@ -9,8 +9,8 @@ public class BoidController : MonoBehaviour
 {
     #region Movement Variables
     internal HashSet<Transform> boidsToConsider = new HashSet<Transform>();
-    public Vector3 direction, cohesion, alignment, separation, obstacleEvasion;
-    internal Vector3 cohesionSteeringDelta, alignmentSteeringDelta, separationSteeringDelta, obstacleEvasionSteeringDelta;
+    public Vector3 direction, cohesion, alignment, separation, obstacleEvasion, target;
+    internal Vector3 cohesionSteeringDelta, alignmentSteeringDelta, separationSteeringDelta, obstacleEvasionSteeringDelta, targetSteeringDelta;
     internal Vector3 currentVelocity, combinedVelocityDelta;
     [SerializeField]
     private int boidsConsidered = 0;
@@ -42,7 +42,13 @@ public class BoidController : MonoBehaviour
     {
         currentVelocity = transform.forward * (settings.MinVelocity + settings.MaxVelocity) / 2;
         meshRenderer = GetComponent<MeshRenderer>();
-        boidsCached = BoidSpawner.Instance.boids;
+        //boidsCached = BoidSpawner.Instance.boids;
+        Driver.m_reportStartingPoints.AddListener(pleaseSubscribe);
+    }
+
+    void pleaseSubscribe()
+    {
+        Pathfinder.AddStartPoint(GridController.CellTransitPoint(new Vector2Int(Mathf.FloorToInt(ownPos.x + 0.5f), Mathf.FloorToInt(ownPos.z + 0.5f))));
     }
 
     Collider[] boidColliderOverlap = new Collider[32];
@@ -113,15 +119,16 @@ public class BoidController : MonoBehaviour
         }
         obstacleEvasion = headingForCollision ? ObstacleAvoidance() : Vector3.zero;
 
-
+        target = GridController.CellDirection(new Vector2Int(Mathf.FloorToInt(ownPos.x + 0.5f), Mathf.FloorToInt(ownPos.z + 0.5f)));
 
         cohesionSteeringDelta = CalculateSteeringDelta(cohesion, currentVelocity, settings.MaxSteerForce) * settings.CohesionWeight;
         alignmentSteeringDelta = CalculateSteeringDelta(alignment, currentVelocity, settings.MaxSteerForce) * settings.AlignmentWeight;
         separationSteeringDelta = CalculateSteeringDelta(separation, currentVelocity, settings.MaxSteerForce) * settings.SeparationWeight;
         obstacleEvasionSteeringDelta = headingForCollision ? CalculateSteeringDelta(obstacleEvasion, currentVelocity, settings.MaxSteerForce) * settings.ObstacleAvoidanceWeight : Vector3.zero;
+        targetSteeringDelta = CalculateSteeringDelta(-target, currentVelocity, settings.MaxSteerForce) * settings.TargetWeight;
 
-        Vector3 summedSteeringDeltas = cohesionSteeringDelta + alignmentSteeringDelta + separationSteeringDelta + obstacleEvasionSteeringDelta;
 
+        Vector3 summedSteeringDeltas = cohesionSteeringDelta + alignmentSteeringDelta + separationSteeringDelta + obstacleEvasionSteeringDelta + targetSteeringDelta;
         return summedSteeringDeltas;
     }
 

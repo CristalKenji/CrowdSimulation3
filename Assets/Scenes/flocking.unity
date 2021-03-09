@@ -157,6 +157,7 @@ MonoBehaviour:
     type: 3}
   amountOfBoids: 600
   spawnRadius: 20
+  settings: {fileID: 11400000, guid: 92d0f9b638ee0d84286833c25bc99f37, type: 2}
 --- !u!4 &45063787
 Transform:
   m_ObjectHideFlags: 0
@@ -358,6 +359,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Aquarium
+      objectReference: {fileID: 0}
+    - target: {fileID: 39073701536235594, guid: cbf38e8a3d6a57447b0d1d57a80c6fd5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 39073701536235595, guid: cbf38e8a3d6a57447b0d1d57a80c6fd5,
         type: 3}

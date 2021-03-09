@@ -51,6 +51,8 @@ public class Driver : MonoBehaviour
         _pathfinder = new Pathfinder(_builder);
 
         _flowField = new FlowField(_builder);
+        _builder.GridController.ExtrudeObstacles();
+
 
         //_builder.showTransitPoints = showTransitPoints;
         _flowField.showDirection = showDirection;
@@ -147,6 +149,7 @@ public class Driver : MonoBehaviour
             _destinationCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             _destinationCube.transform.position = new Vector3(destination.x, 0.2f, destination.y);
             _destinationCube.GetComponent<Renderer>().material.color = Color.magenta;
+            _destinationCube.gameObject.layer = LayerMask.NameToLayer("Target");
 
             return true;
         }
