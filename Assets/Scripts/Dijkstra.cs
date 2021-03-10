@@ -74,7 +74,7 @@ public static class Dijkstra
             else if (node.Coordinate == start.Coordinate)
             {
                 path.Add(new KeyValuePair<int, int>(node.Identifier, node.Distance));
-                Debug.Log("Ziel gefunden " + (node.Coordinate + " = " + start.Coordinate));
+                //Debug.Log("Ziel gefunden " + (node.Coordinate + " = " + start.Coordinate));
                 break;
             }
         }

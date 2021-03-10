@@ -92,7 +92,7 @@ public class Pathfinder
 
     public static void AddStartPoint(Node node)
     {
-        if (!StartingPoints.Contains(node))
+        if (node != null && !StartingPoints.Contains(node))
         {
             StartingPoints.Add(node);
         }

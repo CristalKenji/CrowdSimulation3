@@ -50,7 +50,7 @@ public class Builder
     {
         if (coordinate.x >= 0 && coordinate.x < GridController.Width && (coordinate.y >= 0 && coordinate.y < GridController.Height))
         {
-            Debug.Log("SetDestination to " + coordinate);
+            //Debug.Log("SetDestination to " + coordinate);
             DestinationNode.Coordinate = coordinate;
 
             ResetDestinationEdges(DestinationNode);

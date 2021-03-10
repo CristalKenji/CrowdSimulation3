@@ -49,7 +49,7 @@ public class Cell
 
     public Node TransitPoint
     {
-        // returns the closest TP Point
-        get { return TransitPoints[0].Node; }
+        // returns the closest TP Point if one exists
+        get { return TransitPoints.Count != 0 ? TransitPoints[0].Node : null; }
     }
 }

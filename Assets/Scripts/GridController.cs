@@ -12,12 +12,12 @@ public class GridController
 
     public static Node CellTransitPoint(Vector2Int index)
     {
-        return Cell(index).TransitPoint;
+        // returns the TransitPoint of the cell or null if the cell does not exist
+        return Cell(index) is null ? null : Cell(index).TransitPoint;
     }
 
     public static Vector3 CellDirection(Vector2Int index)
     {
-
         return Cell(index)?.Direction ?? Vector3.zero;
     }
 
