@@ -17,7 +17,8 @@ public class GridController
 
     public static Vector3 CellDirection(Vector2Int index)
     {
-        return Cell(index).Direction;
+
+        return Cell(index)?.Direction ?? Vector3.zero;
     }
 
     public static Cell Cell(Vector2Int index)

@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class BoidSpawner : MonoBehaviour
 {
-    private static BoidSpawner instance;
-    public static BoidSpawner Instance
-    {
-        get { return instance; }
-    }
-
-
     [SerializeField]
     GameObject boidPrefab;
     [SerializeField]
     public int amountOfBoids = 100;
     [SerializeField]
     float spawnRadius = 10;
+    [SerializeField]
+    float spawnAngle = 360;
+    [SerializeField]
+    float spawnInterval = .5f;
+    Driver driver;
 
     internal BoidController[] boids;
 
@@ -32,20 +30,21 @@ public class BoidSpawner : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            instance = this;
-        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        driver ??= FindObjectOfType<Driver>();
         SpawnBoids();
+        Driver.m_reportStartingPoints.AddListener(pleaseSubscribe);
+    }
+
+    void pleaseSubscribe()
+    {
+        Pathfinder.AddStartPoint(GridController.CellTransitPoint(new Vector2Int(Mathf.FloorToInt(transform.position.x + 0.5f), Mathf.FloorToInt(transform.position.z + 0.5f))));
+        StartCoroutine("BoidSpawnCoroutine");
+
     }
 
     GameObject temp;
@@ -58,9 +57,37 @@ public class BoidSpawner : MonoBehaviour
             {
                 temp.transform.Translate(0, -temp.transform.position.y, 0, Space.World);
                 temp.transform.rotation = Quaternion.identity;
-                temp.transform.Rotate(0, Random.Range(0, 360), 0);
+                temp.transform.Rotate(0, Random.Range(0, spawnAngle), 0);
             }
+            temp.SetActive(false);
+            temp.GetComponent<BoidController>().driver = driver;
+            boidBuffer.Enqueue(temp);
         }
         boids = FindObjectsOfType<BoidController>();
+    }
+
+
+    IEnumerator BoidSpawnCoroutine()
+    {
+        while (true)
+        {
+            if (boidBuffer.Count > 0)
+            {
+                GameObject temp = boidBuffer.Dequeue();
+                temp.transform.rotation = transform.rotation;
+                temp.transform.Rotate(0, Random.Range(0, spawnAngle), 0);
+                temp.transform.position = transform.position + temp.transform.forward * Random.Range(0, spawnRadius);
+
+                temp.SetActive(true);
+            }
+            yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+
+    static Queue<GameObject> boidBuffer = new Queue<GameObject>();
+    public static void QueueBoid(GameObject boid)
+    {
+        boid.SetActive(false);
+        boidBuffer.Enqueue(boid);
     }
 }

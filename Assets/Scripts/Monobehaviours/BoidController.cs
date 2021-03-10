@@ -14,6 +14,8 @@ public class BoidController : MonoBehaviour
     internal Vector3 currentVelocity, combinedVelocityDelta;
     [SerializeField]
     private int boidsConsidered = 0;
+
+    public Driver driver;
     #endregion
 
     #region Collision Helpers
@@ -43,12 +45,11 @@ public class BoidController : MonoBehaviour
         currentVelocity = transform.forward * (settings.MinVelocity + settings.MaxVelocity) / 2;
         meshRenderer = GetComponent<MeshRenderer>();
         //boidsCached = BoidSpawner.Instance.boids;
-        Driver.m_reportStartingPoints.AddListener(pleaseSubscribe);
+        //Driver.m_reportStartingPoints.AddListener(pleaseSubscribe);
     }
 
     void pleaseSubscribe()
     {
-        Pathfinder.AddStartPoint(GridController.CellTransitPoint(new Vector2Int(Mathf.FloorToInt(ownPos.x + 0.5f), Mathf.FloorToInt(ownPos.z + 0.5f))));
     }
 
     Collider[] boidColliderOverlap = new Collider[32];
@@ -96,10 +97,12 @@ public class BoidController : MonoBehaviour
         {
             collided = true;
             collisions++;
-            Debug.Log("Collision");
-            meshRenderer.material = settings.boidMaterialEscaped;
-            transform.position = Vector3.zero;
-            //Debug.Break();
+            outOfBounds();
+
+        }
+        if (((1 << other.gameObject.layer) & settings.TargetMask) != 0)
+        {
+            outOfBounds();
         }
     }
 
@@ -119,7 +122,14 @@ public class BoidController : MonoBehaviour
         }
         obstacleEvasion = headingForCollision ? ObstacleAvoidance() : Vector3.zero;
 
-        target = GridController.CellDirection(new Vector2Int(Mathf.FloorToInt(ownPos.x + 0.5f), Mathf.FloorToInt(ownPos.z + 0.5f)));
+        target = GridController.Cell(new Vector2Int(Mathf.FloorToInt(ownPos.x + 0.5f), Mathf.FloorToInt(ownPos.z + 0.5f)))?.Direction ?? outOfBounds();
+
+        if (target == Vector3.zero)
+        {
+            Pathfinder.AddStartPoint(GridController.CellTransitPoint(new Vector2Int(Mathf.FloorToInt(ownPos.x + 0.5f), Mathf.FloorToInt(ownPos.z + 0.5f))));
+
+            driver?.RefreshPaths();
+        }
 
         cohesionSteeringDelta = CalculateSteeringDelta(cohesion, currentVelocity, settings.MaxSteerForce) * settings.CohesionWeight;
         alignmentSteeringDelta = CalculateSteeringDelta(alignment, currentVelocity, settings.MaxSteerForce) * settings.AlignmentWeight;
@@ -130,6 +140,12 @@ public class BoidController : MonoBehaviour
 
         Vector3 summedSteeringDeltas = cohesionSteeringDelta + alignmentSteeringDelta + separationSteeringDelta + obstacleEvasionSteeringDelta + targetSteeringDelta;
         return summedSteeringDeltas;
+    }
+
+    private Vector3 outOfBounds()
+    {
+        BoidSpawner.QueueBoid(gameObject);
+        return Vector3.zero;
     }
 
     // Convert a force into a steering delta

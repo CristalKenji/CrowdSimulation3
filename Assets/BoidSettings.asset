@@ -15,13 +15,16 @@ MonoBehaviour:
   AwarenessRadius: 2.5
   MinVelocity: 1.12
   MaxVelocity: 3.36
-  MaxSteerForce: 12.7
+  MaxSteerForce: 5.31
   UseOptimizedRules: 1
   CohesionWeight: 1
   AlignmentWeight: 2
   SeparationWeight: 2.21
   ObstacleAvoidanceWeight: 59.8
   TargetWeight: 5
+  TargetMask:
+    serializedVersion: 2
+    m_Bits: 256
   BoidMask:
     serializedVersion: 2
     m_Bits: 64
@@ -29,8 +32,8 @@ MonoBehaviour:
   ObstacleMask:
     serializedVersion: 2
     m_Bits: 128
-  ObstacleDetectionSphereRadius: 0.87
-  ObstacleDetectionRange: 11.09
+  ObstacleDetectionSphereRadius: 0.52
+  ObstacleDetectionRange: 2.12
   boidMaterialDefault: {fileID: 2100000, guid: b7843968dd378684ba2aa90bbbb62176, type: 2}
   boidMaterialHeadingForCollision: {fileID: 2100000, guid: 2f3336087b4115c478b140aa2a70b0c2,
     type: 2}

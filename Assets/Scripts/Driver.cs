@@ -122,6 +122,27 @@ public class Driver : MonoBehaviour
         }
     }
 
+    public void RefreshPaths()
+    {
+
+        _pathfinder.Clear();
+
+        //_pathfinder.AddStartPoint(Builder.Nodes[2]);
+        m_reportStartingPoints.Invoke();
+        _flowFieldSectors = _pathfinder.FindHighLevelPath();
+
+        _flowField.Initialise(_flowFieldSectors);
+
+        _flowField.CalculateIntegrationField(_builder.DestinationNode.Coordinate);
+
+        if (showCellLabel)
+        {
+            ShowCellLabel();
+        }
+
+        _flowField.CalculateFlowField(arrowPrefab);
+    }
+
     private void ShowCellLabel()
     {
         // Clear old Cell Labels
