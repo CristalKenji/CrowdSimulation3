@@ -32,7 +32,7 @@ public class GridController
         {
             return Grid[y, x];
         }
-        Debug.LogError("Index out of bounds");
+//        Debug.LogError("Index out of bounds");
         return null;
     }
 
