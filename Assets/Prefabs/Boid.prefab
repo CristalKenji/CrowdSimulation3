@@ -101,7 +101,9 @@ MonoBehaviour:
   alignment: {x: 0, y: 0, z: 0}
   separation: {x: 0, y: 0, z: 0}
   obstacleEvasion: {x: 0, y: 0, z: 0}
+  target: {x: 0, y: 0, z: 0}
   boidsConsidered: 0
+  driver: {fileID: 0}
   collisions: 0
   settings: {fileID: 11400000, guid: 92d0f9b638ee0d84286833c25bc99f37, type: 2}
 --- !u!64 &1356488286283858531
