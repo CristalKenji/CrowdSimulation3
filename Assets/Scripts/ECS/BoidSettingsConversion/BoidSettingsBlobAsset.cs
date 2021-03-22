@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// struct containing the relevant data from the boidsettings scriptable object
 public struct BoidSettingsBlobAsset
 {
     public float AwarenessRadius;

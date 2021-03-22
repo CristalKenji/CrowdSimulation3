@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
+/// Converts a boidsettings asset from a container in a subscene into blobassetreference
+
 [UpdateInGroup(typeof(GameObjectConversionGroup))]
 public class BoidSettingsConversionSystem : GameObjectConversionSystem
 {
@@ -36,6 +38,6 @@ public class BoidSettingsConversionSystem : GameObjectConversionSystem
                 BoidSettingsAssetReference = blobBuilder.CreateBlobAssetReference<BoidSettingsBlobAsset>(Unity.Collections.Allocator.Persistent);
             }
         });
-        Debug.Log($"{BoidSettingsAssetReference.Value.AlignmentWeight.ToString()}");
+        //Debug.Log($"{BoidSettingsAssetReference.Value.AlignmentWeight.ToString()}");
     }
 }
