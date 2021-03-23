@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 //exchanges the boidsettingsproxycomponent with the boidsettingscomponent
@@ -26,9 +27,13 @@ public class BoidSettingsProxySystem : SystemBase
             {
                 boidSettingsBlobAssetReference = temp
             };
+            BoidMemoryComponent memoryComponent = new BoidMemoryComponent
+            {
+                speed = (temp.Value.MinVelocity + temp.Value.MaxVelocity) / 2,
+                pathfindingVector = float3.zero
+            };
             ecb.AddComponent(entity, boidSettingsComponent);
-
-            //ecb.SetComponent<BoidSettingsComponent>(entity, boidSettingsComponent);
+            ecb.AddComponent(entity, memoryComponent);
             ecb.RemoveComponent<BoidSettingsProxyComponent>(entity);
 
         }).Schedule();

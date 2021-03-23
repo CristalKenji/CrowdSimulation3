@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2482816995f8a484895822a33d1cf232, type: 3}
   m_Name: BoidSettings
   m_EditorClassIdentifier: 
-  AwarenessRadius: 2.5
-  MinVelocity: 1.12
-  MaxVelocity: 3.36
-  MaxSteerForce: 5.31
+  AwarenessRadius: 4.04
+  MinVelocity: 1.22
+  MaxVelocity: 2.96
+  MaxSteerForce: 5.17
   UseOptimizedRules: 1
   CohesionWeight: 1
-  AlignmentWeight: 2
-  SeparationWeight: 2.21
+  AlignmentWeight: 1.68
+  SeparationWeight: 2.2
   ObstacleAvoidanceWeight: 59.8
   TargetWeight: 5
   TargetMask:

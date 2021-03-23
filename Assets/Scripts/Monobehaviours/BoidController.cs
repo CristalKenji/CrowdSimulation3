@@ -89,7 +89,6 @@ public class BoidController : MonoBehaviour
 
     BoidController[] boidsCached;
 
-
     private void OnCollisionEnter(Collision other)
     {
 
@@ -144,7 +143,7 @@ public class BoidController : MonoBehaviour
 
     private Vector3 outOfBounds()
     {
-        BoidSpawner.QueueBoid(gameObject);
+        //BoidSpawner.QueueBoid(gameObject);
         return Vector3.zero;
     }
 

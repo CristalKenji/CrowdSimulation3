@@ -16,6 +16,7 @@ public class BoidSettingsConversionSystem : GameObjectConversionSystem
         {
             using (BlobBuilder blobBuilder = new BlobBuilder(Unity.Collections.Allocator.Temp))
             {
+                Debug.Log("Converting Settings");
                 ref BoidSettingsBlobAsset blobAsset = ref blobBuilder.ConstructRoot<BoidSettingsBlobAsset>();
                 blobAsset.AlignmentWeight = container.BoidSettings.AlignmentWeight;
                 blobAsset.AwarenessRadius = container.BoidSettings.AwarenessRadius;
