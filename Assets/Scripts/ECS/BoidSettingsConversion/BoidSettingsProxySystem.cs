@@ -34,6 +34,7 @@ public class BoidSettingsProxySystem : SystemBase
             };
             ecb.AddComponent(entity, boidSettingsComponent);
             ecb.AddComponent(entity, memoryComponent);
+            ecb.AddComponent(entity, new PathfindingComponent());
             ecb.RemoveComponent<BoidSettingsProxyComponent>(entity);
 
         }).Schedule();

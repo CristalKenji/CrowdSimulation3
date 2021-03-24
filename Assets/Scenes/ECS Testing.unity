@@ -156,7 +156,7 @@ MonoBehaviour:
   boidMesh: {fileID: 3613567641014311022, guid: 3eb4d4920a9848b49873661458edddf3,
     type: 3}
   boidMaterial: {fileID: 2100000, guid: b7843968dd378684ba2aa90bbbb62176, type: 2}
-  boidECSPrefab: {fileID: 8806279517583741851, guid: 1709154705007cd4191f02f9cbaf43fe,
+  boidECSPrefab: {fileID: 648119544520120832, guid: 3f6263e48ffc63a46aa82cf7ff2acf86,
     type: 3}
   usePrefab: 1
   boidsToSpawn: 10000
@@ -263,7 +263,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.6862745, g: 1, b: 0, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
